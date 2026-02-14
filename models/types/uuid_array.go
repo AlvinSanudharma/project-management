@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"strings"
@@ -44,4 +45,22 @@ func (a *UUIDArray) Scan(value interface{}) error {
 	}
 
 	return nil
+}
+
+func (a UUIDArray) Value() (driver.Value, error) {
+	if len(a) == 0 {
+		return "{}", nil
+	}
+
+	postgreFormat := make([]string, 0, len(a))
+
+	for _, value := range a {
+		postgreFormat = append(postgreFormat, fmt.Sprintf(`"%s"`, value.String()))
+	}
+
+	return "{" + strings.Join(postgreFormat, ",") + "}", nil
+}
+
+func (a UUIDArray) GormDataType() string {
+	return "uuid[]"
 }
