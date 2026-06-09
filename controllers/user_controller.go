@@ -24,7 +24,7 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 	}
 
 	if err := utils.Validate.Struct(user); err != nil {
-		return utils.BadRequest(ctx, "Validation Error", err.Error())
+		return utils.BadRequest(ctx, "Validation Error", utils.FormatValidationError(err))
 	}
 
 	if err := c.service.Register(user); err != nil {
