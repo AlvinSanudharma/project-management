@@ -23,6 +23,10 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 		return utils.BadRequest(ctx, "Gagal Parsing Data", err.Error())
 	}
 
+	if err := utils.Validate.Struct(user); err != nil {
+		return utils.BadRequest(ctx, "Validation Error", err.Error())
+	}
+
 	if err := c.service.Register(user); err != nil {
 		return utils.BadRequest(ctx, "Registrasi Gagal", err.Error())
 	}
