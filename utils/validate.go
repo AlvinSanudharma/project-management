@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"log"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -12,6 +14,10 @@ func FormatValidationError(err error) string {
 		switch e.Tag() {
 		case "required":
 			return e.Field() + " wajib diisi"
+		case "email":
+			return e.Field() + " harus berupa alamat email yang valid"
+		default:
+			log.Println("Unhandled validation tag:", e.Tag())
 		}
 	}
 
