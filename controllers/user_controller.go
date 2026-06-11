@@ -31,10 +31,10 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 		return utils.BadRequest(ctx, "Registrasi Gagal", err.Error())
 	}
 
-	var userResponse models.UserResponse
-	_ = copier.Copy(&userResponse, user)
+	var userResp models.UserResponse
+	_ = copier.Copy(&userResp, &user)
 
-	return utils.Success(ctx, "Registrasi Success", userResponse)
+	return utils.Success(ctx, "Registrasi Success", userResp)
 }
 
 func (c *UserController) Login(ctx *fiber.Ctx) error {
@@ -59,12 +59,29 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 	token, _ := utils.GenerateToken(user.InternalID, user.Role, user.Email, user.PublicID)
 	refreshToken, _ := utils.GenerateRefreshToken(user.InternalID)
 
-	var userResponse models.UserResponse
-	_ = copier.Copy(&userResponse, user)
+	var userResp models.UserResponse
+	_ = copier.Copy(&userResp, &user)
 
 	return utils.Success(ctx, "Login Successful", fiber.Map{
 		"access_token":  token,
 		"refresh_token": refreshToken,
-		"user":          userResponse,
+		"user":          userResp,
 	})
+}
+
+func (c *UserController) GetUser(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	user, err := c.service.GetByPublicID(id)
+	if err != nil {
+		return utils.NotFound(ctx, "Data Not Found", err.Error())
+	}
+
+	var userResp models.UserResponse
+	err = copier.Copy(&userResp, &user)
+	if err != nil {
+		return utils.BadRequest(ctx, "Internal Server Error", err.Error())
+	}
+
+	return utils.Success(ctx, "Data Berhasil Ditemukan", userResp)
 }
