@@ -12,6 +12,7 @@ type UserRepository interface {
 	FindByEmail(email string) (*models.User, error)
 	FindByID(id uint) (*models.User, error)
 	FindByPublicID(publicID string) (*models.User, error)
+	FindAllPagination(filter, sort string, limit, ofset int) ([]models.User, int64, error)
 }
 
 type userRepository struct{}
@@ -45,7 +46,7 @@ func (r *userRepository) FindByPublicID(publicID string) (*models.User, error) {
 	return &user, err
 }
 
-func (r *userRepository) FindAddPagination(filter, sort string, limit, ofset int) ([]models.User, int64, error) {
+func (r *userRepository) FindAllPagination(filter, sort string, limit, ofset int) ([]models.User, int64, error) {
 	var users []models.User
 	var total int64
 
@@ -61,7 +62,7 @@ func (r *userRepository) FindAddPagination(filter, sort string, limit, ofset int
 	}
 
 	if sort != "" {
-		if sort != "-id" {
+		if sort == "-id" {
 			sort = "-internal_id"
 		} else if sort == "id" {
 			sort = "internal_id"
