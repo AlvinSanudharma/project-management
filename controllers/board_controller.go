@@ -63,6 +63,9 @@ func (c *BoardController) UpdateBoard(ctx *fiber.Ctx) error {
 
 	board.InternalID = existingBoard.InternalID
 	board.PublicID = existingBoard.PublicID
+	board.OwnerID = existingBoard.OwnerID
+	board.OwnerPublicID = existingBoard.OwnerPublicID
+	board.CreatedAt = existingBoard.CreatedAt
 
 	if err := c.services.Update(board); err != nil {
 		return utils.BadRequest(ctx, "Gagal update board", err.Error())
