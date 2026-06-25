@@ -48,3 +48,20 @@ func (s *boardService) Update(board *models.Board) error {
 func (s *boardService) GetByPublicID(publicID string) (*models.Board, error) {
 	return s.boardRepo.FindByPublicID(publicID)
 }
+
+func (s *boardService) AddMember(boardPublicID string, userPublicIDs []string) error {
+	board, err := s.boardRepo.FindByPublicID(boardPublicID)
+	if err != nil {
+		return errors.New("Board not found")
+	}
+
+	var userInternalIDs []uint
+	for _, userPublicID := range userPublicIDs {
+		user, err := s.userRepo.FindByPublicID(userPublicID)
+		if err != nil {
+			return errors.New("User not found: " + userPublicID)
+		}
+
+		userInternalIDs = append(userInternalIDs, uint(user.InternalID))
+	}
+}
