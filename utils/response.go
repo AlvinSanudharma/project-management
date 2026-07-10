@@ -20,12 +20,12 @@ type ResponsePaginated struct {
 }
 
 type PaginationMeta struct {
-	Page       int    `json:"page" example:"1"`
-	Limit      int    `json:"limit" example:"10"`
-	Total      int    `json:"total" example:"100"`
-	TotalPages int    `json:"total_pages" example:"10"`
-	Filter     string `json:"filter" example:"nama=alvin"`
-	Sort       string `json:"sort" example:"-id"`
+	Page      int    `json:"page" example:"1"`
+	Limit     int    `json:"limit" example:"10"`
+	Total     int    `json:"total" example:"100"`
+	TotalPage int    `json:"total_page" example:"10"`
+	Filter    string `json:"filter" example:"nama=alvin"`
+	Sort      string `json:"sort" example:"-id"`
 }
 
 func Success(c *fiber.Ctx, message string, data interface{}) error {

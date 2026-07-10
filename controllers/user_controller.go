@@ -107,12 +107,12 @@ func (c *UserController) GetUserPagination(ctx *fiber.Ctx) error {
 	_ = copier.Copy(&userResp, &users)
 
 	meta := utils.PaginationMeta{
-		Page:       page,
-		Limit:      limit,
-		Total:      int(total),
-		TotalPages: int(math.Ceil(float64(total) / float64(limit))),
-		Filter:     filter,
-		Sort:       sort,
+		Page:      page,
+		Limit:     limit,
+		Total:     int(total),
+		TotalPage: int(math.Ceil(float64(total) / float64(limit))),
+		Filter:    filter,
+		Sort:      sort,
 	}
 
 	if total == 0 {
