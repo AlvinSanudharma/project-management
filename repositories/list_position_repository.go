@@ -41,5 +41,5 @@ func (r *listPositionRepository) GetListOrder(boardPublicID string) ([]uuid.UUID
 }
 
 func (r *listPositionRepository) UpdateListOrder(position models.ListPosition) error {
-	panic("unimplemented")
+	return config.DB.Model(position).Where("internal_id = ?", position.InternalId).Update("list_order", position.ListOrder).Error
 }
