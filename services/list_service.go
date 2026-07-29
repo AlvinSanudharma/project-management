@@ -1,15 +1,18 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/AlvinSanudharma/project-management/models"
 	"github.com/AlvinSanudharma/project-management/repositories"
+	"github.com/AlvinSanudharma/project-management/utils"
 	"github.com/google/uuid"
 )
 
 type listService struct {
-	listRepo         repositories.ListRepository
-	boardRepo        repositories.BoardRepository
-	listPositionRepo repositories.ListPositionRepository
+	listRepo    repositories.ListRepository
+	boardRepo   repositories.BoardRepository
+	listPosRepo repositories.ListPositionRepository
 }
 
 type ListWithOrder struct {
@@ -25,4 +28,32 @@ type ListService interface {
 	Update(list *models.List) error
 	Delete(list *models.List) error
 	UpdatePositions(boardPublicID string, position []uuid.UUID) error
+}
+
+func NewListService(listRepo repositories.ListRepository, boardRepo repositories.BoardRepository, listPosRepo repositories.ListPositionRepository) ListService {
+	return &listService{listRepo, boardRepo, listPosRepo}
+}
+
+func (s *listService) GetByBoardID(boardPublicID string) (*ListWithOrder, error) {
+	_, err := s.boardRepo.FindByPublicID(boardPublicID)
+	if err != nil {
+		return nil, errors.New("board not found")
+	}
+
+	position, err := s.listPosRepo.GetListOrder(boardPublicID)
+	if err != nil {
+		return nil, errors.New("failed to get list order : " + err.Error())
+	}
+
+	lists, err := s.listRepo.FindByBoardID(boardPublicID)
+	if err != nil {
+		return nil, errors.New("failed to get list : " + err.Error())
+	}
+
+	orderedList := utils.SortListByPosition(lists, position)
+
+	return &ListWithOrder{
+		Positions: position,
+		Lists:     orderedList,
+	}, nil
 }
